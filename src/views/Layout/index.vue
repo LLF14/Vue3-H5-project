@@ -1,10 +1,7 @@
 <script lang="ts" setup></script>
 
 <template>
-  <div class="box">
-    <!-- 3. 设置路由挂载点 -->
-    <router-view />
-  </div>
+  <div>布局容器</div>
 </template>
 
 <style lang="scss" scoped></style>
