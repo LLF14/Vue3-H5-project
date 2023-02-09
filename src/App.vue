@@ -2,7 +2,6 @@
 
 <template>
   <div class="box">
-    <!-- 3. 设置路由挂载点 -->
     <router-view />
   </div>
 </template>
