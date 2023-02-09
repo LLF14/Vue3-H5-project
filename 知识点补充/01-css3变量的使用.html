@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    div {
+      padding: 50px;
+      margin: 20px;
+    }
+
+    .one {
+      /* 1. 掌握如何定义css3变量 */
+      --hm-color: pink;
+
+      /* 2. 掌握如何使用css3变量 var(--变量名) */
+      border: 5px solid var(--hm-color);
+    }
+
+    /* 3. 知道css3变量可以被继承 */
+    .two {
+      border: 5px solid var(--hm-color);
+    }
+
+    /* 3. 知道css3变量可以被后代覆盖 */
+    .three {
+      --hm-color: red;
+      border: 5px solid var(--hm-color);
+    }
+
+    /* 4. :root代表什么html根节点 */
+    :root {
+      background-color: black;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="one">
+    <div class="two">
+      <div class="three">
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
