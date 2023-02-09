@@ -1,12 +1,4 @@
-<script setup lang="ts">
-/*
-  学习目标：cpNavbar组件封装 - 静态结构和代码解读
-  步骤：
-     1. 
-     2. 
-     3. 
-*/
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <van-nav-bar left-arrow fixed placeholder title="注册" right-text="注册" />
