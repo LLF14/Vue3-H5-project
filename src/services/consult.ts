@@ -1,35 +1,6 @@
-import type { KnowledgeParams } from '@/types/consult'
+import type { KnowledgeParams, FollowType } from '@/types/consult'
 import type { AddPatient } from '@/types/user'
 import request from '@/utils/request'
-
-export const loginAPI = (mobile: string, password: string) => {
-  return request({
-    url: '/login/password',
-    method: 'post',
-    data: { mobile, password }
-  })
-}
-
-export const sendCodeAPI = (mobile: string, type: string = 'login') => {
-  return request({
-    url: 'code',
-    params: { mobile, type }
-  })
-}
-
-export const codeLoginAPI = (mobile: string, code: string) => {
-  return request({
-    url: 'login',
-    method: 'post',
-    data: { mobile, code }
-  })
-}
-
-export const getUserInfoAPI = () => {
-  return request({
-    url: '/patient/myUser'
-  })
-}
 
 /** 获取患者列表 */
 export const getPatientListAPI = () => {
@@ -55,4 +26,8 @@ export const getKnowledgePageAPI = (params: KnowledgeParams) => {
 // 首页医生卡片
 export const getDoctorPageAPI = (current = 1, pageSize = 10) => {
   return request({ url: '/home/page/doc', params: { current, pageSize } })
+}
+
+export const followDoctorAPI = (id: string, type: FollowType = 'doc') => {
+  return request({ url: '/like', method: 'POST', data: { id, type } })
 }

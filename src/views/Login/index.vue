@@ -5,8 +5,9 @@ import { showSuccessToast, showToast } from 'vant'
 import { onUnmounted, ref } from 'vue'
 import { codeLoginAPI, loginAPI, sendCodeAPI } from '@/services/user'
 import { useUserStore } from '@/stores'
-import { onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 const router = useRouter()
+const route = useRoute()
 const store = useUserStore()
 const mobile = ref('13230000001')
 const password = ref('abc12345')
@@ -22,14 +23,18 @@ const onsubmit = async () => {
     ? await loginAPI(mobile.value, password.value)
     : await codeLoginAPI(mobile.value, code.value)
   // localStorage.setItem('userData', JSON.stringify(res.data))
+
   if (res.data) {
     store.saveUser(res.data)
     console.log(res)
     showSuccessToast('登录成功')
-    router.push('/')
+    if (route.query.returnPath) {
+      router.push(route.query.returnPath as string)
+    } else {
+      router.push('/')
+    }
   } else {
-    // @ts-ignore
-    showToast(res.message)
+    showToast(res.data.message)
   }
 }
 
@@ -44,8 +49,7 @@ let timerId: number
 const onSendCode = async () => {
   send.value = 60
   const res = await sendCodeAPI(mobile.value)
-  // @ts-ignore
-  showToast(res.message)
+  showToast(res.data.message)
   timerId = setInterval(() => {
     send.value--
     console.log('定时器')

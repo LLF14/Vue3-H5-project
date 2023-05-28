@@ -18,7 +18,7 @@ module.exports = {
       {
         singleQuote: true, // 单引号
         semi: false, // 没有分号
-        printWidth: 80, // 每行超过100字符， 自动换行
+        printWidth: 100, // 每行超过100字符， 自动换行
         trailingComma: 'none', // 没有对象数组最后一个逗号
         endOfLine: 'auto' // 自动添加换行符
       }
