@@ -2,7 +2,7 @@
 import { followDoctorAPI } from '@/services/consult'
 import type { Doctor } from '@/types/consult'
 import { showSuccessToast } from 'vant'
-import { ref } from 'vue'
+
 interface Emit {
   (name: 'followById', id: string): void
 }

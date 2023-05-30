@@ -112,3 +112,59 @@ export type Consult = {
 /** 问诊记录-全部可选 */
 export type PartialConsult = Partial<Consult>
 // 💥💥 全部可选是因为信息是一点一点累加上去的
+
+export interface TopDep {
+  /**
+   * 子级集合
+   */
+  child?: Child[]
+  /**
+   * 科室id--一级科室
+   */
+  id?: string
+  /**
+   * 科室名称
+   */
+  name?: string
+}
+
+export interface SubDep {
+  /**
+   * 科室的图标
+   */
+  avatar: Avatar
+  /**
+   * 子级id
+   */
+  id: string
+  /**
+   * 子级name
+   */
+  name: string
+}
+
+export type ConsultIllness = Pick<
+  PartialConsult,
+  'illnessDesc' | 'illnessTime' | 'consultFlag' | 'pictures'
+>
+
+/** 问诊订单预支付信息 */
+export interface OrderPreData {
+  /** 实付金额 */
+  actualPayment: number
+  /** 优惠券抵扣 */
+  couponDeduction: number
+  /** 使用的优惠券id-使用优惠券时，返回 */
+  couponId?: string
+  /** 极速问诊类型：0普通1三甲,极速问题必须有值 */
+  illnessType?: number
+  /** 应付款/价格-图文或者极速的费用，极速普通10元，三甲39元 */
+  payment: number
+  /** 积分可抵扣 */
+  pointDeduction: number
+  /** 1问医生2极速问诊2开药问诊--默认是1 */
+  type?: number
+}
+
+/** 请求订单支付信息的参数 */
+export type OrderPreParams = Pick<OrderPreData, 'type' | 'illnessType'>

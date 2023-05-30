@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
   options: { label: string; value: string | number }[]
-  modelValue: string | number
+  modelValue?: string | number
 }
 defineProps<Props>()
 interface Emits {

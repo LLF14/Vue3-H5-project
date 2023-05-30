@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import type { ConsultType } from '@/enums'
-import type { PartialConsult } from '@/types/consult'
+import type { ConsultIllness, PartialConsult } from '@/types/consult'
 import { ref } from 'vue'
+import { computed } from 'vue'
 
 export const useConsultStore = defineStore(
   'cp-consult',
@@ -16,7 +17,26 @@ export const useConsultStore = defineStore(
     // 设置科室
     const setDep = (id: string) => (consult.value.depId = id)
 
-    return { consult, setType, setIllnessType, setDep }
+    const setIllness = (formData: ConsultIllness) => {
+      consult.value.illnessDesc = formData.illnessDesc
+      consult.value.illnessTime = formData.illnessTime
+      consult.value.consultFlag = formData.consultFlag
+      consult.value.pictures = formData.pictures
+    }
+
+    const setPatinetId = (id: string) => (consult.value.patientId = id)
+
+    // 清除
+    const clear = () => [(consult.value = {})]
+
+    const isNotEmpty = computed(() => {
+      return (
+        consult.value.illnessDesc ||
+        consult.value.illnessType ||
+        consult.value.consultFlag !== undefined
+      )
+    })
+    return { consult, setType, setIllnessType, setDep, setIllness, setPatinetId, clear, isNotEmpty }
   },
   {
     persist: true

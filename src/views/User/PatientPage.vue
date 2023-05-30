@@ -6,12 +6,41 @@ import { computed, watch } from 'vue'
 import { ref } from 'vue'
 import { onMounted } from 'vue'
 import Validator from 'id-validator'
+import { useRoute } from 'vue-router'
+import { useConsultStore } from '@/stores'
+import { useRouter } from 'vue-router'
+// 是否是选择患者
+const route = useRoute()
+const router = useRouter()
+const store = useConsultStore()
+const isSelect = route.query.isSelect
 
 const list = ref<Patient[]>([])
 const loadData = async () => {
   const res = await getPatientListAPI()
   list.value = res.data
   console.log(res)
+
+  // 挂载默认选中
+  if (!list.value.length || !isSelect) return
+
+  const defaultItem = list.value.find((item) => item.defaultFlag === 1)
+  if (!defaultItem) {
+    selectId.value = list.value[0].id
+  } else {
+    selectId.value = defaultItem.id
+  }
+}
+
+const onNext = () => {
+  if (!selectId.value) return showToast('请选择就诊人')
+  store.setPatinetId(selectId.value)
+  router.push('/consult/pay')
+}
+
+const selectId = ref<string>('')
+const setId = (id: string) => {
+  selectId.value = id
 }
 
 onMounted(() => {
@@ -54,7 +83,6 @@ const onSubmit = async () => {
   if (!validate.isValid(formData.value.idCard)) return showToast('身份证格式错误')
   const { sex } = validate.getInfo(formData.value.idCard)
   if (formData.value.gender !== sex) return showToast('性别和身份证不符')
-
   const res = (await formData.value.id)
     ? await editPatientAPI(formData.value)
     : await addPatientAPI(formData.value)
@@ -91,9 +119,20 @@ const delById = async () => {
 
 <template>
   <div class="patient-page">
-    <cp-nav-bar title="家庭档案" />
+    <cp-nav-bar :title="isSelect ? '选择患者' : '家庭档案'" />
+    <!-- 头部提示 -->
+    <div class="patient-change" v-if="isSelect">
+      <h3>请选择患者信息</h3>
+      <p>以便医生给出更准确的治疗，信息仅医生可见</p>
+    </div>
     <div class="patient-list">
-      <div class="patient-item" v-for="item in list" :key="item.id">
+      <div
+        class="patient-item"
+        v-for="item in list"
+        :key="item.id"
+        :class="{ selected: selectId === item.id }"
+        @click="setId(item.id)"
+      >
         <div class="info">
           <span class="name">{{ item.name }}</span>
           <span class="id">{{ item.idCard.replace(/^(\d{6})\d{8}(\d{4})$/, '\$1******\$2') }}</span>
@@ -109,7 +148,10 @@ const delById = async () => {
       </div>
       <div class="patient-tip">最多可添加 6 人</div>
     </div>
-
+    <!-- 底部按钮 -->
+    <div class="patient-next" v-if="isSelect">
+      <van-button type="primary" round block @click="onNext()">下一步</van-button>
+    </div>
     <!-- 添加患者弹窗 popup -->
     <van-popup v-model:show="isShow" position="right">
       <cp-nav-bar
@@ -142,6 +184,26 @@ const delById = async () => {
 </template>
 
 <style lang="scss" scoped>
+.patient-change {
+  padding: 15px;
+  > h3 {
+    font-weight: normal;
+    margin-bottom: 5px;
+  }
+  > p {
+    color: var(--cp-text3);
+  }
+}
+.patient-next {
+  padding: 15px;
+  background-color: #fff;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 80px;
+  box-sizing: border-box;
+}
 .patient-page {
   padding: 0 0 80px;
   ::v-deep() {
