@@ -76,3 +76,21 @@ export const consultPayApi = (data: PayParams) => {
 export const getOrderDetailAPI = (orderId: string) => {
   return request({ url: '/patient/consult/order/detail', params: { orderId } })
 }
+
+/** 查看处方API */
+export const getPrescriptionPicAPI = (id: string) => {
+  return request(`/patient/consult/prescription/${id}`)
+}
+
+type EvaluateOrderParams = {
+  docId: string
+  orderId: string
+  score: number
+  content: string
+  anonymousFlag: 0 | 1
+}
+
+// 评价问诊
+export const evaluateOrderAPI = (data: EvaluateOrderParams) => {
+  return request({ url: '/patient/order/evaluate', method: 'POST', data })
+}

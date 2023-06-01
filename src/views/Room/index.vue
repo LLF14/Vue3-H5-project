@@ -17,6 +17,7 @@ import { MsgType, OrderType } from '@/enums'
 import { nextTick } from 'vue'
 import { showToast } from 'vant'
 import dayjs from 'dayjs'
+import { provide } from 'vue'
 // 参数1：不传默认是当前服务域名，开发中传入服务器地址
 // 参数2：配置参数，根据需要再来介绍
 
@@ -113,6 +114,18 @@ const nextTime = ref(dayjs().format('YYYY-MM-DD HH:mm:ss'))
 const onRefresh = () => {
   socket.emit('getChatMsgList', 20, nextTime.value, route.query.orderId)
 }
+
+const updataEva = (score: number) => {
+  const preEvaitem = list.value.find((item) => {
+    return item.msgType === MsgType.CardEvaForm
+  })
+  preEvaitem!.msg.evaluateDoc = { score }
+  preEvaitem!.msgType = MsgType.CardEva
+}
+
+// 传孙组件
+provide('updataEva', updataEva)
+provide('orderDetail', orderDetail)
 </script>
 
 <template>

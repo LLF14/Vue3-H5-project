@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { IllnessTime, MsgType } from '@/enums'
+import { IllnessTime, MsgType, PrescriptionStatus } from '@/enums'
 import EvaluateCard from './EvaluateCard.vue'
 
-import type { Message } from '@/types/room'
+import type { Message, Prescription } from '@/types/room'
 import type { Image } from '@/types/consult'
-import { showImagePreview } from 'vant'
+import { showImagePreview, showToast } from 'vant'
 import { getConsultFlagText, getIllnessTimeText } from '@/constants'
 import { useUserStore } from '@/stores'
 import docImg from '@/assets/avatar-doctor.svg'
 import dayjs from 'dayjs'
+import { getPrescriptionPicAPI } from '@/services/consult'
+import { useRouter } from 'vue-router'
 const formatTime = (time: string) => dayjs(time).format('HH:mm')
 defineProps<{ list: Message[] }>()
 
@@ -22,6 +24,22 @@ const store = useUserStore()
 
 const onLoad = () => {
   window.scrollTo({ top: document.body.scrollHeight })
+}
+
+const onPreviewImg = async (id: string) => {
+  const res = await getPrescriptionPicAPI(id)
+  showImagePreview([res.data.url])
+}
+
+const router = useRouter()
+const onBuy = async (pre: Prescription) => {
+  if (pre.status === PrescriptionStatus.Invalid) return showToast('处方已失效')
+  if (pre.status === PrescriptionStatus.NotPayment && !pre.orderId) {
+    showToast('请完成支付')
+    router.push(`/order/pay?id=${pre.id}`)
+    return
+  }
+  router.push(`/order/${pre.orderId}`)
 }
 </script>
 
@@ -102,7 +120,9 @@ const onLoad = () => {
         <div class="head van-hairline--bottom">
           <div class="head-tit">
             <h3>电子处方</h3>
-            <p>原始处方 <van-icon name="arrow"></van-icon></p>
+            <p @click="onPreviewImg(msg.prescription!.id)">
+              原始处方 <van-icon name="arrow"></van-icon>
+            </p>
           </div>
           <p>
             {{ msg.prescription.name }} {{ msg.prescription.genderValue }}
@@ -120,9 +140,17 @@ const onLoad = () => {
           </div>
         </div>
         <div class="foot">
-          <span>购买药品</span>
+          <span @click="onBuy(msg.prescription!)">购买药品</span>
         </div>
       </div>
+    </div>
+
+    <!-- 评价 -->
+    <div
+      class="msg msg-comment"
+      v-if="msgType === MsgType.CardEva || msgType === MsgType.CardEvaForm"
+    >
+      <evaluate-card :evaluateDoc="msg.evaluateDoc" />
     </div>
   </div>
 </template>
