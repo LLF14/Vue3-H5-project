@@ -113,7 +113,7 @@ const onPay = async () => {
       v-model:show="isshow"
     >
       <div class="pay-type">
-        <p class="amount">￥20元</p>
+        <p class="amount">￥{{ payInfo?.payment }}元</p>
         <van-cell-group>
           <van-cell title="微信支付" @click="paymentMethod = 0">
             <template #icon><cp-icon name="consult-wechat" /></template>
