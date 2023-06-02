@@ -1,4 +1,10 @@
-import type { KnowledgeParams, FollowType, OrderPreParams, PartialConsult } from '@/types/consult'
+import type {
+  KnowledgeParams,
+  FollowType,
+  OrderPreParams,
+  PartialConsult,
+  ConsultOrderListParams
+} from '@/types/consult'
 import type { AddPatient } from '@/types/user'
 import request from '@/utils/request'
 
@@ -93,4 +99,19 @@ type EvaluateOrderParams = {
 // 评价问诊
 export const evaluateOrderAPI = (data: EvaluateOrderParams) => {
   return request({ url: '/patient/order/evaluate', method: 'POST', data })
+}
+
+// 问诊记录
+export const getOrderRecordsAPI = (params: ConsultOrderListParams) => {
+  return request({ url: '/patient/consult/order/list', params })
+}
+
+/** 取消订单API */
+export const cancelOrderAPI = (id: string) => {
+  return request({ url: `/patient/order/cancel/${id}`, method: 'PUT' })
+}
+
+/** 删除订单 */
+export const delOrderAPI = (id: string) => {
+  return request({ url: `/patient/order/${id}`, method: 'DELETE' })
 }

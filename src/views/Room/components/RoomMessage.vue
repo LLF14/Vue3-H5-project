@@ -152,6 +152,13 @@ const onBuy = async (pre: Prescription) => {
     >
       <evaluate-card :evaluateDoc="msg.evaluateDoc" />
     </div>
+
+    <!-- 结束问诊消息 -->
+    <div class="msg msg-tip msg-tip-cancel" v-if="msgType === MsgType.NotifyCancel">
+      <div class="content">
+        <span>{{ msg.content }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
