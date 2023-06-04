@@ -1,57 +1,19 @@
 <script setup lang="ts">
 import { OrderType } from '@/enums'
 import type { ConsultOrderItem } from '@/types/consult'
-import { ref } from 'vue'
-import { cancelOrderAPI, delOrderAPI } from '@/services/consult'
-import { showToast } from 'vant'
+import { useCancel, useDel, usePreview } from '@/composable'
+import CpConsultMore from '@/components/CpConsultMore.vue'
 
-defineProps<{ item: ConsultOrderItem }>()
+const props = defineProps<{ item: ConsultOrderItem }>()
 
-const actions = [
-  {
-    text: ' 查看处方'
-  },
-  {
-    text: '删除订单'
-  }
-]
-
-const onSelect = (actions: any, index: number) => {
-  console.log(index)
-}
-
-const loading = ref(false)
-const onCancel = async (item: ConsultOrderItem) => {
-  try {
-    loading.value = true
-    await cancelOrderAPI(item.id)
-    showToast('取消成功')
-    item.status = OrderType.ConsultCancel
-    item.statusValue = '取消订单'
-    loading.value = false
-  } catch (error) {
-    loading.value = false
-    showToast('取消失败')
-  }
-}
+const { loading, onCancel } = useCancel()
 
 interface Emit {
   (name: 'onDel', id: string): void
 }
 const emit = defineEmits<Emit>()
-const delLoading = ref(false)
-const onDel = async (id: string) => {
-  try {
-    delLoading.value = true
-    await delOrderAPI(id)
-    delLoading.value = false
-    emit('onDel', id)
-    showToast('删除成功')
-  } catch (error) {
-    showToast('删除失败')
-    delLoading.value = false
-  }
-}
+const { delLoading, onDel } = useDel(() => emit('onDel', props.item.id))
+const { onPreviewImg } = usePreview()
 </script>
 
 <template>
@@ -98,7 +60,14 @@ const onDel = async (id: string) => {
       </van-button>
     </div>
     <div class="foot" v-if="item.status === OrderType.ConsultChat">
-      <van-button v-if="item.prescriptionId" class="gray" plain size="small" round>
+      <van-button
+        v-if="item.prescriptionId"
+        class="gray"
+        plain
+        size="small"
+        round
+        @click="onPreviewImg(item.prescriptionId!)"
+      >
         查看处方
       </van-button>
       <van-button type="primary" plain size="small" round :to="`/room?orderId=${item.id}`">
@@ -106,11 +75,10 @@ const onDel = async (id: string) => {
       </van-button>
     </div>
     <div class="foot" v-if="item.status === OrderType.ConsultComplete">
-      <div class="more">
-        <van-popover placement="top-start" :actions="actions" @select="onSelect">
-          <template #reference> 更多 </template>
-        </van-popover>
-      </div>
+      <cp-consult-more
+        @on-del="onDel(item.id)"
+        @on-preview="onPreviewImg(item.prescriptionId!)"
+      ></cp-consult-more>
       <van-button class="gray" plain size="small" round :to="`/room?orderId=${item.id}`">
         问诊记录
       </van-button>

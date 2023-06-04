@@ -11,6 +11,7 @@ import docImg from '@/assets/avatar-doctor.svg'
 import dayjs from 'dayjs'
 import { getPrescriptionPicAPI } from '@/services/consult'
 import { useRouter } from 'vue-router'
+import { usePreview } from '@/composable'
 const formatTime = (time: string) => dayjs(time).format('HH:mm')
 defineProps<{ list: Message[] }>()
 
@@ -26,10 +27,7 @@ const onLoad = () => {
   window.scrollTo({ top: document.body.scrollHeight })
 }
 
-const onPreviewImg = async (id: string) => {
-  const res = await getPrescriptionPicAPI(id)
-  showImagePreview([res.data.url])
-}
+const { onPreviewImg } = usePreview()
 
 const router = useRouter()
 const onBuy = async (pre: Prescription) => {

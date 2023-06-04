@@ -106,29 +106,11 @@ const onPay = async () => {
       button-text="立即支付"
       text-align="left"
     />
-    <van-action-sheet
-      title="选择支付方式"
-      :close-on-popstate="false"
-      :closeable="false"
+    <cp-pay-sheet
       v-model:show="isshow"
-    >
-      <div class="pay-type">
-        <p class="amount">￥{{ payInfo?.payment }}元</p>
-        <van-cell-group>
-          <van-cell title="微信支付" @click="paymentMethod = 0">
-            <template #icon><cp-icon name="consult-wechat" /></template>
-            <template #extra><van-checkbox :checked="paymentMethod === 0" /></template>
-          </van-cell>
-          <van-cell title="支付宝支付" @click="paymentMethod = 1">
-            <template #icon><cp-icon name="consult-alipay" /></template>
-            <template #extra><van-checkbox :checked="paymentMethod === 1" /></template>
-          </van-cell>
-        </van-cell-group>
-        <div class="btn">
-          <van-button type="primary" round block @click="onPay()">立即支付</van-button>
-        </div>
-      </div>
-    </van-action-sheet>
+      pay-callback="http://localhost:5173/room"
+      :order-id="orderId"
+    />
   </div>
 </template>
 
